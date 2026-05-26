@@ -365,6 +365,12 @@ function buildPreview(){
     let val;
     if(isXeVar(v)){
       val=getXeValue();
+      // Nếu chọn free thì xóa luôn phần hậu tố đi kèm (vd: k/xe, k/tháng...)
+      if(xeMode && xeMode!=='custom'){
+        const escaped=v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        body=body.replace(new RegExp('\\{'+escaped+'\\}\\S*','g'), val);
+        return;
+      }
     } else if(isMoTaVar(v)){
       val=getMotaValue(v);
     } else {
