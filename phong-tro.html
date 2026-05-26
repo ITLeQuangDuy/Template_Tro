@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tạo văn bản phòng trọ</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f8f7f4;--surface:#ffffff;--border:#e5e3dc;--border2:#d1cfc8;
+    --text:#1a1a1a;--text2:#666;--text3:#999;
+    --blue-bg:#eff6ff;--blue-border:#bfdbfe;--blue-text:#1d4ed8;
+    --red-bg:#fef2f2;--red-border:#fecaca;--red-text:#dc2626;
+    --green-bg:#f0fdf4;--green-border:#bbf7d0;--green-text:#16a34a;
+    --radius:10px;--radius-sm:7px;
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--border2:#3d3d3a;
+      --text:#f0ede6;--text2:#9a9790;--text3:#666;
+      --blue-bg:#1e2d40;--blue-border:#2563eb;--blue-text:#93c5fd;
+      --red-bg:#2d1515;--red-border:#dc2626;--red-text:#fca5a5;
+      --green-bg:#0f2d1a;--green-border:#16a34a;--green-text:#86efac;
+    }
+  }
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+  .app{max-width:480px;margin:0 auto;padding:16px}
+  h1{font-size:18px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  h1 span{font-size:20px}
+
+  .tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--border);padding:4px;border-radius:var(--radius)}
+  .tab{flex:1;padding:9px;border:none;border-radius:7px;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s}
+  .tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+  .card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+
+  .field{margin-bottom:10px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:13px;color:var(--text2);margin-bottom:5px;font-weight:500}
+  .field input,.field select,.field textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);
+    font-size:15px;background:var(--bg);color:var(--text);outline:none;
+    -webkit-appearance:none;appearance:none;
+  }
+  .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue-border);box-shadow:0 0 0 3px var(--blue-bg)}
+  .field textarea{resize:vertical;min-height:64px;font-family:inherit}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+  .toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+  .toggle{position:relative;width:42px;height:26px;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0;position:absolute}
+  .track{position:absolute;inset:0;background:var(--border2);border-radius:13px;cursor:pointer;transition:.2s}
+  .track:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  input:checked~.track{background:#3b82f6}
+  input:checked~.track:before{transform:translateX(16px)}
+  .toggle-label{font-size:14px;color:var(--text2)}
+
+  .xe-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+  .xe-opt{padding:9px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;text-align:center;background:var(--bg);color:var(--text2);transition:all .15s;-webkit-tap-highlight-color:transparent}
+  .xe-opt.active{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue-text);font-weight:500}
+
+  .mota-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .mota-chip{padding:7px 11px;border:1px solid var(--border2);border-radius:20px;font-size:13px;cursor:pointer;background:var(--bg);color:var(--text2);transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+  .mota-chip.active{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue-text);font-weight:500}
+
+  /* === SỬA: preview đổi thành textarea có thể chỉnh sửa === */
+  .preview{
+    width:100%;background:var(--bg);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:14px;font-size:15px;line-height:1.9;
+    white-space:pre-wrap;word-break:break-word;min-height:100px;color:var(--text);
+    margin-top:10px;font-family:inherit;resize:vertical;outline:none;
+  }
+  .preview:focus{border-color:var(--blue-border);box-shadow:0 0 0 3px var(--blue-bg)}
+  .preview.empty{color:var(--text3);font-style:italic}
+  .preview-hint{font-size:11px;color:var(--text3);margin-top:4px}
+
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .btn{padding:13px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;border:1px solid;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+  .btn:active{transform:scale(.96)}
+  .btn-copy{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue-text)}
+  .btn-clear{background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)}
+  .btn-save{background:var(--green-bg);border-color:var(--green-border);color:var(--green-text)}
+  .btn-cancel{background:var(--bg);border-color:var(--border2);color:var(--text2)}
+
+  .tpl-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;background:var(--surface);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .tpl-item:active{background:var(--bg)}
+  .tpl-name{font-size:14px;font-weight:500}
+  .tpl-vars{font-size:12px;color:var(--text3);margin-top:2px}
+  .icon-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:6px;color:var(--text3);line-height:1;border-radius:6px}
+  .icon-btn:active{background:var(--border)}
+  .add-btn{width:100%;padding:11px;border:1px dashed var(--border2);border-radius:var(--radius-sm);background:none;color:var(--text2);font-size:14px;cursor:pointer;margin-top:4px;-webkit-tap-highlight-color:transparent}
+  .add-btn:active{background:var(--border)}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;background:var(--blue-bg);color:var(--blue-text);border:1px solid var(--blue-border);margin:2px}
+  .vars-wrap{display:flex;flex-wrap:wrap;margin-top:6px}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(0);
+    background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:24px;
+    font-size:14px;white-space:nowrap;z-index:9999;
+    opacity:0;transition:opacity .25s;pointer-events:none;
+  }
+  @media(prefers-color-scheme:dark){.toast{background:#fff;color:#111}}
+  .toast.show{opacity:1}
+
+  .divider{height:1px;background:var(--border);margin:12px 0}
+  .hint{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
+
+  #panel-template{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1><span>🏠</span> Tạo văn bản phòng trọ</h1>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('nhap')">✍️ Nhập thông tin</button>
+    <button class="tab" onclick="switchTab('mau')">📋 Quản lý mẫu</button>
+  </div>
+
+  <!-- TAB NHẬP -->
+  <div id="panel-nhap">
+    <div class="card">
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="toggle-moi" onchange="buildPreview()">
+          <span class="track"></span>
+        </label>
+        <span class="toggle-label">Hiện dòng "Dự án mới"</span>
+      </div>
+      <div class="divider" style="margin:0 0 12px"></div>
+      <div class="field">
+        <label>Mẫu đang dùng</label>
+        <select id="sel-tpl" onchange="loadTemplate()"></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Thông tin phòng</div>
+      <div id="fields-container"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Nội dung tạo ra</div>
+      <!-- === SỬA: đổi div.preview thành textarea để chỉnh sửa được === -->
+      <textarea class="preview empty" id="preview" rows="7" oninput="userEdited=true">Điền thông tin để xem kết quả...</textarea>
+      <p class="preview-hint">✏️ Bạn có thể chỉnh sửa trực tiếp nội dung trên</p>
+      <div class="btn-row">
+        <button class="btn btn-copy" onclick="copyText()">📋 Sao chép</button>
+        <button class="btn btn-clear" onclick="clearAll()">🔄 Xóa trắng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB MẪU -->
+  <div id="panel-template">
+    <div class="card">
+      <div class="card-title">Danh sách mẫu</div>
+      <div id="tpl-list"></div>
+      <button class="add-btn" onclick="openEditor(null)">＋ Thêm mẫu mới</button>
+    </div>
+
+    <div id="editor-wrap" style="display:none">
+      <div class="card">
+        <div class="card-title" id="editor-title">Chỉnh sửa mẫu</div>
+        <div class="field">
+          <label>Tên mẫu</label>
+          <input type="text" id="ed-name" placeholder="VD: Mẫu phòng dịch vụ">
+        </div>
+        <div class="field">
+          <label>Nội dung mẫu</label>
+          <textarea id="ed-body" rows="7" oninput="parseEditorVars()" placeholder="Dùng {Tên biến} cho các ô nhập liệu&#10;VD:&#10;📍{Địa chỉ}&#10;💰{Giá từ} - {Giá đến}&#10;⚡ Điện: {Giá điện}k/Kwh"></textarea>
+          <p class="hint">💡 Dùng <strong>{Tên biến}</strong> để tạo ô nhập liệu. Biến có chữ "xe" sẽ hiện nút chọn nhanh.</p>
+        </div>
+        <div id="ed-vars-wrap" style="display:none">
+          <div class="card-title" style="margin-bottom:4px">Biến tìm thấy</div>
+          <div class="vars-wrap" id="ed-vars"></div>
+        </div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn btn-save" onclick="saveTemplate()">✅ Lưu mẫu</button>
+          <button class="btn btn-cancel" onclick="cancelEditor()">✕ Huỷ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Storage ──────────────────────────────────────────────
+const DEFAULT = [{
+  id:'default',
+  name:'Mẫu chuẩn',
+  body:'📍{Địa chỉ}\n💰{Giá} - {Mô tả}\n⚡ Điện: {Giá điện}k/Kwh\n💧 Nước: {Giá nước}k/người\n💲 Dvu: {Phí dịch vụ}k/phòng\n🏍️ Xe: {Giá xe}k/xe'
+}];
+
+let templates=[], currentTpl=null, editingId=null, xeMode=null;
+let userEdited=false; // === SỬA: theo dõi người dùng có tự sửa preview không ===
+
+function ls_load(){
+  try{ templates=JSON.parse(localStorage.getItem('prt_v1')||'null')||[...DEFAULT]; }
+  catch(e){ templates=[...DEFAULT]; }
+}
+function ls_save(){ localStorage.setItem('prt_v1',JSON.stringify(templates)); }
+
+// ── Utils ────────────────────────────────────────────────
+function getVars(body){
+  const m=body.match(/\{([^}]+)\}/g);
+  return m?[...new Set(m.map(v=>v.slice(1,-1)))]:[];
+}
+function eid(v){ return 'f_'+v.replace(/[^a-zA-Z0-9]/g,'_'); }
+function isXeVar(v){ return v.toLowerCase().includes('xe'); }
+function isMoTaVar(v){ return v.toLowerCase().replace(/\s/g,'').includes('môtả')||v.toLowerCase().replace(/\s/g,'').includes('mota'); }
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ── Tabs ─────────────────────────────────────────────────
+function switchTab(tab){
+  document.getElementById('panel-nhap').style.display=tab==='nhap'?'':'none';
+  document.getElementById('panel-template').style.display=tab==='mau'?'':'none';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(tab==='nhap'&&i===0)||(tab==='mau'&&i===1)));
+  if(tab==='mau') renderTplList();
+}
+
+// ── Template select ───────────────────────────────────────
+function renderSelect(){
+  const sel=document.getElementById('sel-tpl');
+  sel.innerHTML=templates.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+  if(currentTpl) sel.value=currentTpl.id;
+}
+function loadTemplate(){
+  const id=document.getElementById('sel-tpl').value;
+  currentTpl=templates.find(t=>t.id===id)||templates[0];
+  xeMode=null;
+  userEdited=false; // reset khi đổi mẫu
+  renderFields();
+  buildPreview();
+}
+
+// ── Fields ────────────────────────────────────────────────
+function renderFields(){
+  if(!currentTpl) return;
+  const vars=getVars(currentTpl.body);
+  const normal=vars.filter(v=>!isXeVar(v)&&!isMoTaVar(v));
+  const xeVar=vars.find(v=>isXeVar(v));
+  const motaVar=vars.find(v=>isMoTaVar(v));
+  let html='';
+
+  // Tìm vị trí của biến Giá trong danh sách normal để chèn Mô tả ngay sau
+  const giaIdx=normal.findIndex(v=>v.toLowerCase().includes('giá')&&!isXeVar(v));
+  // Vị trí hàng (theo cặp 2 cột) chứa Giá — Mô tả sẽ xuất hiện sau hàng đó
+  const insertAfterRow = giaIdx>=0 ? Math.floor(giaIdx/2) : normal.length;
+
+  for(let i=0;i<normal.length;i+=2){
+    if(i+1<normal.length){
+      html+=`<div class="row">
+        <div class="field"><label>${normal[i]}</label><input type="text" id="${eid(normal[i])}" placeholder="..." oninput="userEdited=false;buildPreview()"></div>
+        <div class="field"><label>${normal[i+1]}</label><input type="text" id="${eid(normal[i+1])}" placeholder="..." oninput="userEdited=false;buildPreview()"></div>
+      </div>`;
+    } else {
+      html+=`<div class="field"><label>${normal[i]}</label><input type="text" id="${eid(normal[i])}" placeholder="..." oninput="userEdited=false;buildPreview()"></div>`;
+    }
+    // Chèn Mô tả ngay sau hàng chứa biến Giá
+    if(motaVar && Math.floor(i/2)===insertAfterRow){
+      const motaOpts=['1PN','2PN','Studio','Gác','Ban công','Cửa sổ','Cửa sổ trời','Máy giặt riêng','Thang máy'];
+      html+=`<div class="field">
+        <label>${motaVar}</label>
+        <input type="text" id="${eid(motaVar)}" placeholder="Nhập mô tả..." oninput="userEdited=false;buildPreview()">
+        <div class="mota-chips" id="mota-chips-wrap">
+          ${motaOpts.map(o=>`<span class="mota-chip" onclick="toggleMotaChip(this,'${o}')">${o}</span>`).join('')}
+        </div>
+      </div>`;
+    }
+  }
+  // Nếu không tìm thấy biến Giá thì render Mô tả ở cuối normal fields
+  if(motaVar && insertAfterRow>=normal.length){
+    const motaOpts=['1PN','2PN','Studio','Gác','Ban công','Cửa sổ','Cửa sổ trời','Máy giặt riêng','Thang máy'];
+    html+=`<div class="field">
+      <label>${motaVar}</label>
+      <input type="text" id="${eid(motaVar)}" placeholder="Nhập mô tả..." oninput="userEdited=false;buildPreview()">
+      <div class="mota-chips" id="mota-chips-wrap">
+        ${motaOpts.map(o=>`<span class="mota-chip" onclick="toggleMotaChip(this,'${o}')">${o}</span>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Render xe field cuối cùng
+  if(xeVar){
+    html+=`<div class="field">
+      <label>🏍️ ${xeVar}</label>
+      <input type="text" id="${eid(xeVar)}" placeholder="Xe: ...k/xe" oninput="xeMode='custom';userEdited=false;buildPreview()">
+      <div class="xe-grid" style="margin-top:8px">
+        <div class="xe-opt" onclick="setXe('free xe',this)">🆓 Free xe</div>
+        <div class="xe-opt" onclick="setXe('free 1 xe',this)">🛵 Free 1 xe</div>
+        <div class="xe-opt" onclick="setXe('free 2 xe',this)">🛵🛵 Free 2 xe</div>
+        <div class="xe-opt" onclick="setXe('custom',this)">✏️ Nhập tay</div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('fields-container').innerHTML=html;
+}
+
+function setXe(mode,el){
+  document.querySelectorAll('.xe-opt').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  xeMode=mode;
+  if(mode!=='custom'){
+    const vars=getVars(currentTpl.body);
+    const xeVar=vars.find(v=>isXeVar(v));
+    if(xeVar){
+      const inp=document.getElementById(eid(xeVar));
+      if(inp) inp.value='';
+    }
+  }
+  userEdited=false;
+  buildPreview();
+}
+
+function getXeValue(){
+  if(!currentTpl) return '';
+  const vars=getVars(currentTpl.body);
+  const xeVar=vars.find(v=>isXeVar(v));
+  if(!xeVar) return '';
+  if(xeMode==='free xe') return 'free xe';
+  if(xeMode==='free 1 xe') return 'free 1 xe';
+  if(xeMode==='free 2 xe') return 'free 2 xe';
+  const inp=document.getElementById(eid(xeVar));
+  return inp?(inp.value?(inp.value):'{'+xeVar+'}'):'{'+xeVar+'}';
+}
+
+function toggleMotaChip(el, val){
+  el.classList.toggle('active');
+  userEdited=false;
+  buildPreview();
+}
+
+function getMotaValue(motaVar){
+  const inp=document.getElementById(eid(motaVar));
+  const typed=inp?inp.value.trim():'';
+  const chips=[...document.querySelectorAll('.mota-chip.active')].map(c=>c.textContent);
+  const parts=[];
+  if(typed) parts.push(typed);
+  if(chips.length) parts.push(chips.join(', '));
+  return parts.length?parts.join(', '):('{'+motaVar+'}');
+}
+
+// ── Preview ───────────────────────────────────────────────
+function buildPreview(){
+  if(!currentTpl) return;
+  // === SỬA: nếu người dùng đã tự sửa thì không ghi đè ===
+  if(userEdited) return;
+
+  const showMoi=document.getElementById('toggle-moi').checked;
+  let body=currentTpl.body;
+  const vars=getVars(body);
+
+  vars.forEach(v=>{
+    let val;
+    if(isXeVar(v)){
+      val=getXeValue();
+    } else if(isMoTaVar(v)){
+      val=getMotaValue(v);
+    } else {
+      const inp=document.getElementById(eid(v));
+      val=inp?inp.value:'';
+    }
+    body=body.split('{'+v+'}').join(val||'{'+v+'}');
+  });
+
+  const out=(showMoi?'Dự án mới\n':'')+body;
+  const el=document.getElementById('preview');
+  el.value=out;           // === SỬA: dùng .value thay vì .textContent ===
+  el.classList.remove('empty');
+}
+
+function copyText(){
+  const el=document.getElementById('preview');
+  const text=el.value;
+  if(!text||el.classList.contains('empty')) return toast('Chưa có nội dung!');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>toast('✅ Đã sao chép!')).catch(()=>fallbackCopy(text));
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');toast('✅ Đã sao chép!');}catch(e){toast('Không sao chép được');}
+  document.body.removeChild(ta);
+}
+
+function clearAll(){
+  document.querySelectorAll('#fields-container input,#fields-container textarea').forEach(i=>i.value='');
+  document.getElementById('toggle-moi').checked=false;
+  document.querySelectorAll('.xe-opt').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.mota-chip').forEach(x=>x.classList.remove('active'));
+  xeMode=null;
+  userEdited=false;
+  const el=document.getElementById('preview');
+  el.value='Điền thông tin để xem kết quả...';
+  el.classList.add('empty');
+}
+
+// ── Template list ─────────────────────────────────────────
+function renderTplList(){
+  const list=document.getElementById('tpl-list');
+  if(!templates.length){list.innerHTML='<p style="font-size:14px;color:var(--text3);text-align:center;padding:16px">Chưa có mẫu nào</p>';return;}
+  list.innerHTML=templates.map(t=>{
+    const vars=getVars(t.body).slice(0,4);
+    const more=getVars(t.body).length>4?` +${getVars(t.body).length-4} nữa`:'';
+    return `<div class="tpl-item">
+      <div onclick="editFromList('${t.id}')" style="flex:1;min-width:0">
+        <div class="tpl-name">${t.name}</div>
+        <div class="tpl-vars">${vars.map(v=>'{'+v+'}').join(' ')}${more}</div>
+      </div>
+      <button class="icon-btn" onclick="event.stopPropagation();deleteTpl('${t.id}')" title="Xóa">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function editFromList(id){
+  const tpl=templates.find(t=>t.id===id);
+  if(tpl) openEditor(tpl);
+}
+
+function deleteTpl(id){
+  if(templates.length<=1){toast('⚠️ Cần ít nhất 1 mẫu');return;}
+  if(!confirm('Xóa mẫu này?')) return;
+  templates=templates.filter(t=>t.id!==id);
+  if(currentTpl?.id===id) currentTpl=templates[0];
+  ls_save();
+  renderTplList();
+  renderSelect();
+  loadTemplate();
+  toast('Đã xóa mẫu');
+}
+
+// ── Editor ────────────────────────────────────────────────
+function openEditor(tpl){
+  editingId=tpl?tpl.id:null;
+  document.getElementById('editor-title').textContent=tpl?'Chỉnh sửa: '+tpl.name:'Thêm mẫu mới';
+  document.getElementById('ed-name').value=tpl?tpl.name:'';
+  document.getElementById('ed-body').value=tpl?tpl.body:'';
+  document.getElementById('editor-wrap').style.display='';
+  parseEditorVars();
+  document.getElementById('ed-name').focus();
+}
+function cancelEditor(){
+  document.getElementById('editor-wrap').style.display='none';
+  editingId=null;
+}
+function parseEditorVars(){
+  const vars=getVars(document.getElementById('ed-body').value);
+  const wrap=document.getElementById('ed-vars-wrap');
+  wrap.style.display=vars.length?'':'none';
+  document.getElementById('ed-vars').innerHTML=vars.map(v=>`<span class="badge">{${v}}</span>`).join('');
+}
+function saveTemplate(){
+  const name=document.getElementById('ed-name').value.trim();
+  const body=document.getElementById('ed-body').value.trim();
+  if(!name){toast('⚠️ Nhập tên mẫu');return;}
+  if(!body){toast('⚠️ Nhập nội dung mẫu');return;}
+  if(editingId){
+    const idx=templates.findIndex(t=>t.id===editingId);
+    if(idx>=0) templates[idx]={...templates[idx],name,body};
+  } else {
+    templates.push({id:'t'+Date.now(),name,body});
+  }
+  ls_save();
+  renderTplList();
+  renderSelect();
+  if(!editingId||currentTpl?.id===editingId) loadTemplate();
+  cancelEditor();
+  toast('✅ Đã lưu mẫu!');
+}
+
+// ── Init ──────────────────────────────────────────────────
+ls_load();
+renderSelect();
+loadTemplate();
+</script>
+</body>
+</html>
