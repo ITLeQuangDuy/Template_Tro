@@ -293,7 +293,7 @@ function renderFields(){
   // Render xe field cuối cùng
   if(xeVar){
     html+=`<div class="field">
-      <label>🏍️ ${xeVar}</label>
+      <label> ${xeVar}</label>
       <input type="text" id="${eid(xeVar)}" placeholder="Xe: ...k/xe" oninput="xeMode='custom';userEdited=false;buildPreview()">
       <div class="xe-grid" style="margin-top:8px">
         <div class="xe-opt" onclick="setXe('free xe',this)">🆓 Free xe</div>
