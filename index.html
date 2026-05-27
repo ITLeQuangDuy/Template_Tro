@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Tạo văn bản phòng trọ</title>
+<!-- <title>Tạo văn bản phòng trọ</title> -->
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -164,15 +164,11 @@
 </head>
 <body>
 <div class="app">
-  <h1 style="justify-content:space-between">
-    <span>Tạo văn bản phòng trọ</span>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">Dark</button>
-  </h1>
 
   <!-- TAB NHẬP -->
   <div id="panel-nhap">
     <div class="card">
-      <div class="card-title">Thông tin phòng</div>
+      <!-- <div class="card-title">Thông tin phòng <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">Dark</button></div> -->
       <div id="fields-container"></div>
     </div>
 
@@ -252,6 +248,7 @@
       <button class="tab active" onclick="switchTab('nhap')">Nhập thông tin</button>
       <button class="tab" onclick="switchTab('mau')">Quản lý mẫu</button>
     </div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">Dark</button>
   </div>
 </div>
 
