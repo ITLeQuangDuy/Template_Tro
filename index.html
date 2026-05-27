@@ -14,10 +14,24 @@
     --green-bg:#f0fdf4;--green-border:#bbf7d0;--green-text:#16a34a;
     --radius:10px;--radius-sm:7px;
   }
+  [data-theme="dark"]{
+    --bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--border2:#3d3d3a;
+    --text:#f0ede6;--text2:#9a9790;--text3:#555;
+    --blue-bg:#1e2d40;--blue-border:#2563eb;--blue-text:#93c5fd;
+    --red-bg:#2d1515;--red-border:#dc2626;--red-text:#fca5a5;
+    --green-bg:#0f2d1a;--green-border:#16a34a;--green-text:#86efac;
+  }
+  [data-theme="light"]{
+    --bg:#f8f7f4;--surface:#ffffff;--border:#e5e3dc;--border2:#d1cfc8;
+    --text:#1a1a1a;--text2:#666;--text3:#999;
+    --blue-bg:#eff6ff;--blue-border:#bfdbfe;--blue-text:#1d4ed8;
+    --red-bg:#fef2f2;--red-border:#fecaca;--red-text:#dc2626;
+    --green-bg:#f0fdf4;--green-border:#bbf7d0;--green-text:#16a34a;
+  }
   @media(prefers-color-scheme:dark){
-    :root{
+    :root:not([data-theme]){
       --bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--border2:#3d3d3a;
-      --text:#f0ede6;--text2:#9a9790;--text3:#666;
+      --text:#f0ede6;--text2:#9a9790;--text3:#555;
       --blue-bg:#1e2d40;--blue-border:#2563eb;--blue-text:#93c5fd;
       --red-bg:#2d1515;--red-border:#dc2626;--red-text:#fca5a5;
       --green-bg:#0f2d1a;--green-border:#16a34a;--green-text:#86efac;
@@ -26,11 +40,45 @@
   body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
   .app{max-width:480px;margin:0 auto;padding:16px}
   h1{font-size:18px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-  h1 span{font-size:20px}
 
-  .tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--border);padding:4px;border-radius:var(--radius)}
+  /* Tabs */
+  .tabs{display:flex;gap:6px;background:var(--border);padding:4px;border-radius:var(--radius)}
   .tab{flex:1;padding:9px;border:none;border-radius:7px;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s}
   .tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+  /* Bottom bar: select + add btn + tabs */
+  .bottom-bar{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+  .select-row{display:flex;gap:6px;align-items:center}
+  .select-row select{
+    flex:1;padding:10px 32px 10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);
+    font-size:14px;font-weight:500;background:var(--bg);color:var(--text);outline:none;
+    -webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;
+  }
+  .select-row select:focus{border-color:var(--blue-border);box-shadow:0 0 0 3px var(--blue-bg)}
+  .btn-add-tpl{
+    flex-shrink:0;width:40px;height:40px;border:1px solid var(--border2);border-radius:var(--radius-sm);
+    background:var(--bg);color:var(--text2);font-size:20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .15s;
+    -webkit-tap-highlight-color:transparent;line-height:1;
+  }
+  .btn-add-tpl:active{background:var(--border)}
+
+  /* Inline add-template form */
+  .add-tpl-form{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px;display:none;flex-direction:column;gap:10px;
+  }
+  .add-tpl-form.open{display:flex}
+  .add-tpl-form-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+  .add-tpl-form input,.add-tpl-form textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--radius-sm);
+    font-size:14px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;
+  }
+  .add-tpl-form input:focus,.add-tpl-form textarea:focus{border-color:var(--blue-border);box-shadow:0 0 0 3px var(--blue-bg)}
+  .add-tpl-form textarea{resize:vertical;min-height:80px}
+  .add-tpl-form-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
   .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
   .card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
@@ -65,7 +113,6 @@
   .mota-chip{padding:7px 11px;border:1px solid var(--border2);border-radius:20px;font-size:13px;cursor:pointer;background:var(--bg);color:var(--text2);transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
   .mota-chip.active{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue-text);font-weight:500}
 
-  /* === SỬA: preview đổi thành textarea có thể chỉnh sửa === */
   .preview{
     width:100%;background:var(--bg);border:1px solid var(--border);
     border-radius:var(--radius-sm);padding:14px;font-size:15px;line-height:1.9;
@@ -74,7 +121,6 @@
   }
   .preview:focus{border-color:var(--blue-border);box-shadow:0 0 0 3px var(--blue-bg)}
   .preview.empty{color:var(--text3);font-style:italic}
-  .preview-hint{font-size:11px;color:var(--text3);margin-top:4px}
 
   .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
   .btn{padding:13px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;border:1px solid;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;-webkit-tap-highlight-color:transparent}
@@ -97,59 +143,51 @@
   .vars-wrap{display:flex;flex-wrap:wrap;margin-top:6px}
 
   .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(0);
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
     background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:24px;
     font-size:14px;white-space:nowrap;z-index:9999;
     opacity:0;transition:opacity .25s;pointer-events:none;
   }
-  @media(prefers-color-scheme:dark){.toast{background:#fff;color:#111}}
+  [data-theme='dark'] .toast{background:#fff;color:#111}
+  [data-theme='light'] .toast{background:#1a1a1a;color:#fff}
   .toast.show{opacity:1}
 
   .divider{height:1px;background:var(--border);margin:12px 0}
   .hint{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
 
   #panel-template{display:none}
+  .theme-btn{background:none;border:1px solid var(--border2);border-radius:20px;
+    padding:5px 11px;font-size:13px;color:var(--text2);cursor:pointer;
+    transition:all .15s;-webkit-tap-highlight-color:transparent;line-height:1.4}
+  .theme-btn:active{background:var(--border)}
 </style>
 </head>
 <body>
 <div class="app">
-  <h1><span>🏠</span> Tạo văn bản phòng trọ</h1>
-
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('nhap')">✍️ Nhập thông tin</button>
-    <button class="tab" onclick="switchTab('mau')">📋 Quản lý mẫu</button>
-  </div>
+  <h1 style="justify-content:space-between">
+    <span>Tạo văn bản phòng trọ</span>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">Dark</button>
+  </h1>
 
   <!-- TAB NHẬP -->
   <div id="panel-nhap">
-    <div class="card">
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="toggle-moi" onchange="buildPreview()">
-          <span class="track"></span>
-        </label>
-        <span class="toggle-label">Hiện dòng "Dự án mới"</span>
-      </div>
-      <div class="divider" style="margin:0 0 12px"></div>
-      <div class="field">
-        <label>Mẫu đang dùng</label>
-        <select id="sel-tpl" onchange="loadTemplate()"></select>
-      </div>
-    </div>
-
     <div class="card">
       <div class="card-title">Thông tin phòng</div>
       <div id="fields-container"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">Nội dung tạo ra</div>
-      <!-- === SỬA: đổi div.preview thành textarea để chỉnh sửa được === -->
+      <div class="toggle-row" style="padding:0 0 10px">
+        <label class="toggle">
+          <input type="checkbox" id="toggle-moi" onchange="buildPreview()">
+          <span class="track"></span>
+        </label>
+        <span class="toggle-label">Hiện dòng "Dự án mới"</span>
+      </div>
       <textarea class="preview empty" id="preview" rows="7" oninput="userEdited=true">Điền thông tin để xem kết quả...</textarea>
-      <p class="preview-hint">✏️ Bạn có thể chỉnh sửa trực tiếp nội dung trên</p>
       <div class="btn-row">
-        <button class="btn btn-copy" onclick="copyText()">📋 Sao chép</button>
-        <button class="btn btn-clear" onclick="clearAll()">🔄 Xóa trắng</button>
+        <button class="btn btn-copy" onclick="copyText()">Sao chép</button>
+        <button class="btn btn-clear" onclick="clearAll()">Xóa trắng</button>
       </div>
     </div>
   </div>
@@ -159,7 +197,7 @@
     <div class="card">
       <div class="card-title">Danh sách mẫu</div>
       <div id="tpl-list"></div>
-      <button class="add-btn" onclick="openEditor(null)">＋ Thêm mẫu mới</button>
+      <button class="add-btn" onclick="openEditor(null)">+ Thêm mẫu mới</button>
     </div>
 
     <div id="editor-wrap" style="display:none">
@@ -171,18 +209,48 @@
         </div>
         <div class="field">
           <label>Nội dung mẫu</label>
-          <textarea id="ed-body" rows="7" oninput="parseEditorVars()" placeholder="Dùng {Tên biến} cho các ô nhập liệu&#10;VD:&#10;📍{Địa chỉ}&#10;💰{Giá từ} - {Giá đến}&#10;⚡ Điện: {Giá điện}k/Kwh"></textarea>
-          <p class="hint">💡 Dùng <strong>{Tên biến}</strong> để tạo ô nhập liệu. Biến có chữ "xe" sẽ hiện nút chọn nhanh.</p>
+          <textarea id="ed-body" rows="7" oninput="parseEditorVars()" placeholder="Dùng {Tên biến} cho các ô nhập liệu&#10;VD:&#10;{Địa chỉ}&#10;{Giá từ} - {Giá đến}&#10;Điện: {Giá điện}k/Kwh"></textarea>
+          <p class="hint">Dùng <strong>{Tên biến}</strong> để tạo ô nhập liệu. Biến có chữ "xe" sẽ hiện nút chọn nhanh.</p>
         </div>
         <div id="ed-vars-wrap" style="display:none">
           <div class="card-title" style="margin-bottom:4px">Biến tìm thấy</div>
           <div class="vars-wrap" id="ed-vars"></div>
         </div>
         <div class="btn-row" style="margin-top:14px">
-          <button class="btn btn-save" onclick="saveTemplate()">✅ Lưu mẫu</button>
-          <button class="btn btn-cancel" onclick="cancelEditor()">✕ Huỷ</button>
+          <button class="btn btn-save" onclick="saveTemplate()">Lưu mẫu</button>
+          <button class="btn btn-cancel" onclick="cancelEditor()">Huỷ</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <!-- Inline add form -->
+    <div class="add-tpl-form" id="add-tpl-form">
+      <div class="add-tpl-form-title" id="add-tpl-form-title">Thêm mẫu mới</div>
+      <input type="text" id="quick-name" placeholder="Tên mẫu">
+      <textarea id="quick-body" rows="4" oninput="parseQuickVars()" placeholder="Nội dung mẫu — dùng {Tên biến}"></textarea>
+      <div id="quick-vars-wrap" style="display:none">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Biến tìm thấy</div>
+        <div class="vars-wrap" id="quick-vars"></div>
+      </div>
+      <div class="add-tpl-form-btns">
+        <button class="btn btn-save" style="padding:10px;font-size:14px" onclick="saveQuickTemplate()">Lưu mẫu</button>
+        <button class="btn btn-cancel" style="padding:10px;font-size:14px" onclick="closeQuickForm()">Huỷ</button>
+      </div>
+    </div>
+
+    <!-- Select row -->
+    <div class="select-row">
+      <select id="sel-tpl" onchange="loadTemplate()"></select>
+      <button class="btn-add-tpl" id="btn-add-tpl" onclick="toggleQuickForm()" title="Thêm mẫu mới">+</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('nhap')">Nhập thông tin</button>
+      <button class="tab" onclick="switchTab('mau')">Quản lý mẫu</button>
     </div>
   </div>
 </div>
@@ -198,7 +266,7 @@ const DEFAULT = [{
 }];
 
 let templates=[], currentTpl=null, editingId=null, xeMode=null;
-let userEdited=false; // === SỬA: theo dõi người dùng có tự sửa preview không ===
+let userEdited=false;
 
 function ls_load(){
   try{ templates=JSON.parse(localStorage.getItem('prt_v1')||'null')||[...DEFAULT]; }
@@ -238,12 +306,84 @@ function loadTemplate(){
   const id=document.getElementById('sel-tpl').value;
   currentTpl=templates.find(t=>t.id===id)||templates[0];
   xeMode=null;
-  userEdited=false; // reset khi đổi mẫu
+  userEdited=false;
   renderFields();
   buildPreview();
 }
 
+// ── Quick add form ────────────────────────────────────────
+let quickFormOpen=false;
+let quickEditingId=null;
+
+function toggleQuickForm(){
+  if(quickFormOpen){ closeQuickForm(); return; }
+  quickEditingId=null;
+  document.getElementById('add-tpl-form-title').textContent='Thêm mẫu mới';
+  document.getElementById('quick-name').value='';
+  document.getElementById('quick-body').value='';
+  document.getElementById('quick-vars-wrap').style.display='none';
+  document.getElementById('add-tpl-form').classList.add('open');
+  document.getElementById('btn-add-tpl').textContent='×';
+  quickFormOpen=true;
+  document.getElementById('quick-name').focus();
+}
+
+function openQuickEdit(tpl){
+  quickEditingId=tpl.id;
+  document.getElementById('add-tpl-form-title').textContent='Chỉnh sửa: '+tpl.name;
+  document.getElementById('quick-name').value=tpl.name;
+  document.getElementById('quick-body').value=tpl.body;
+  document.getElementById('add-tpl-form').classList.add('open');
+  document.getElementById('btn-add-tpl').textContent='×';
+  quickFormOpen=true;
+  parseQuickVars();
+  // scroll to bottom
+  setTimeout(()=>document.getElementById('add-tpl-form').scrollIntoView({behavior:'smooth',block:'end'}),50);
+}
+
+function closeQuickForm(){
+  document.getElementById('add-tpl-form').classList.remove('open');
+  document.getElementById('btn-add-tpl').textContent='+';
+  quickFormOpen=false;
+  quickEditingId=null;
+}
+
+function parseQuickVars(){
+  const vars=getVars(document.getElementById('quick-body').value);
+  const wrap=document.getElementById('quick-vars-wrap');
+  wrap.style.display=vars.length?'':'none';
+  document.getElementById('quick-vars').innerHTML=vars.map(v=>`<span class="badge">{${v}}</span>`).join('');
+}
+
+function saveQuickTemplate(){
+  const name=document.getElementById('quick-name').value.trim();
+  const body=document.getElementById('quick-body').value.trim();
+  if(!name){toast('Nhập tên mẫu');return;}
+  if(!body){toast('Nhập nội dung mẫu');return;}
+  if(quickEditingId){
+    const idx=templates.findIndex(t=>t.id===quickEditingId);
+    if(idx>=0) templates[idx]={...templates[idx],name,body};
+    if(currentTpl?.id===quickEditingId){ currentTpl=templates[idx]; loadTemplate(); }
+  } else {
+    const newTpl={id:'t'+Date.now(),name,body};
+    templates.push(newTpl);
+    currentTpl=newTpl;
+  }
+  ls_save();
+  renderSelect();
+  if(currentTpl) document.getElementById('sel-tpl').value=currentTpl.id;
+  if(!quickEditingId) loadTemplate();
+  renderTplList();
+  closeQuickForm();
+  toast('Đã lưu mẫu!');
+}
+
 // ── Fields ────────────────────────────────────────────────
+function isGiaVar(v){ return v.toLowerCase().includes('giá')&&!isXeVar(v); }
+function isGiaDienVar(v){ const l=v.toLowerCase().replace(/\s/g,''); return l.includes('giáđiện')||l.includes('giadian')||l.includes('dienk'); }
+function isGiaNuocVar(v){ const l=v.toLowerCase().replace(/\s/g,''); return l.includes('giánước')||l.includes('gianuc')||l.includes('nuock'); }
+function isPhiDvVar(v){ const l=v.toLowerCase().replace(/\s/g,''); return l.includes('phídịchvụ')||l.includes('phidichvu')||l.includes('phídv')||l.includes('phidv')||l.includes('dvu'); }
+
 function renderFields(){
   if(!currentTpl) return;
   const vars=getVars(currentTpl.body);
@@ -252,54 +392,42 @@ function renderFields(){
   const motaVar=vars.find(v=>isMoTaVar(v));
   let html='';
 
-  // Tìm vị trí của biến Giá trong danh sách normal để chèn Mô tả ngay sau
-  const giaIdx=normal.findIndex(v=>v.toLowerCase().includes('giá')&&!isXeVar(v));
-  // Vị trí hàng (theo cặp 2 cột) chứa Giá — Mô tả sẽ xuất hiện sau hàng đó
-  const insertAfterRow = giaIdx>=0 ? Math.floor(giaIdx/2) : normal.length;
+  const utilGroup=normal.filter(v=>isGiaDienVar(v)||isGiaNuocVar(v)||isPhiDvVar(v));
+  const mainFields=normal.filter(v=>!isGiaDienVar(v)&&!isGiaNuocVar(v)&&!isPhiDvVar(v));
 
-  for(let i=0;i<normal.length;i+=2){
-    if(i+1<normal.length){
+  const giaIdx=mainFields.findIndex(v=>isGiaVar(v));
+  const insertAfterRow = giaIdx>=0 ? Math.floor(giaIdx/2) : mainFields.length;
+
+  for(let i=0;i<mainFields.length;i+=2){
+    if(i+1<mainFields.length){
       html+=`<div class="row">
-        <div class="field"><label>${normal[i]}</label><input type="text" id="${eid(normal[i])}" placeholder="..." oninput="userEdited=false;buildPreview()"></div>
-        <div class="field"><label>${normal[i+1]}</label><input type="text" id="${eid(normal[i+1])}" placeholder="..." oninput="userEdited=false;buildPreview()"></div>
+        <div class="field" style="margin-bottom:0"><input type="text" id="${eid(mainFields[i])}" placeholder="${mainFields[i]}" oninput="userEdited=false;buildPreview()"></div>
+        <div class="field" style="margin-bottom:0"><input type="text" id="${eid(mainFields[i+1])}" placeholder="${mainFields[i+1]}" oninput="userEdited=false;buildPreview()"></div>
       </div>`;
     } else {
-      html+=`<div class="field"><label>${normal[i]}</label><input type="text" id="${eid(normal[i])}" placeholder="..." oninput="userEdited=false;buildPreview()"></div>`;
+      html+=`<div class="field" style="margin-bottom:0"><input type="text" id="${eid(mainFields[i])}" placeholder="${mainFields[i]}" oninput="userEdited=false;buildPreview()"></div>`;
     }
-    // Chèn Mô tả ngay sau hàng chứa biến Giá
     if(motaVar && Math.floor(i/2)===insertAfterRow){
-      const motaOpts=['1PN','2PN','Studio','Gác','Ban công','Cửa sổ','Cửa sổ trời','Máy giặt riêng','Thang máy'];
-      html+=`<div class="field">
-        <label>${motaVar}</label>
-        <input type="text" id="${eid(motaVar)}" placeholder="Nhập mô tả..." oninput="userEdited=false;buildPreview()">
-        <div class="mota-chips" id="mota-chips-wrap">
-          ${motaOpts.map(o=>`<span class="mota-chip" onclick="toggleMotaChip(this,'${o}')">${o}</span>`).join('')}
-        </div>
-      </div>`;
+      html+=renderMotaChips(motaVar);
     }
   }
-  // Nếu không tìm thấy biến Giá thì render Mô tả ở cuối normal fields
-  if(motaVar && insertAfterRow>=normal.length){
-    const motaOpts=['1PN','2PN','Studio','Gác','Ban công','Cửa sổ','Cửa sổ trời','Máy giặt riêng','Thang máy'];
-    html+=`<div class="field">
-      <label>${motaVar}</label>
-      <input type="text" id="${eid(motaVar)}" placeholder="Nhập mô tả..." oninput="userEdited=false;buildPreview()">
-      <div class="mota-chips" id="mota-chips-wrap">
-        ${motaOpts.map(o=>`<span class="mota-chip" onclick="toggleMotaChip(this,'${o}')">${o}</span>`).join('')}
-      </div>
-    </div>`;
+  if(motaVar && insertAfterRow>=mainFields.length){
+    html+=renderMotaChips(motaVar);
   }
 
-  // Render xe field cuối cùng
+  if(utilGroup.length){
+    const cols=utilGroup.map(v=>`<div class="field" style="margin-bottom:0"><input type="text" id="${eid(v)}" placeholder="${v}" oninput="userEdited=false;buildPreview()"></div>`).join('');
+    const gridCols=utilGroup.length>=3?'1fr 1fr 1fr':'1fr 1fr';
+    html+=`<div style="display:grid;grid-template-columns:${gridCols};gap:8px;margin-top:8px">${cols}</div>`;
+  }
+
   if(xeVar){
-    html+=`<div class="field">
-      <label> ${xeVar}</label>
-      <input type="text" id="${eid(xeVar)}" placeholder="Xe: ...k/xe" oninput="xeMode='custom';userEdited=false;buildPreview()">
-      <div class="xe-grid" style="margin-top:8px">
-        <div class="xe-opt" onclick="setXe('free xe',this)">🆓 Free xe</div>
-        <div class="xe-opt" onclick="setXe('free 1 xe',this)">🛵 Free 1 xe</div>
-        <div class="xe-opt" onclick="setXe('free 2 xe',this)">🛵🛵 Free 2 xe</div>
-        <div class="xe-opt" onclick="setXe('custom',this)">✏️ Nhập tay</div>
+    html+=`<div class="field" style="margin-top:8px;margin-bottom:0">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+        <input type="text" id="${eid(xeVar)}" placeholder="${xeVar}" oninput="setXe('custom',null);userEdited=false;buildPreview()" style="padding:9px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;background:var(--bg);color:var(--text);outline:none;text-align:center">
+        <div class="xe-opt" onclick="setXe('free xe',this)">Free xe</div>
+        <div class="xe-opt" onclick="setXe('free 1 xe',this)">Free 1 xe</div>
+        <div class="xe-opt" onclick="setXe('free 2 xe',this)">Free 2 xe</div>
       </div>
     </div>`;
   }
@@ -307,9 +435,18 @@ function renderFields(){
   document.getElementById('fields-container').innerHTML=html;
 }
 
+function renderMotaChips(motaVar){
+  const motaOpts=['1PN','2PN','Studio','Gác lửng','Ban công','Cửa sổ','Cửa sổ trời','Tách bếp','Máy giặt riêng','Thang máy'];
+  return `<div class="field" style="margin-top:6px;margin-bottom:0">
+    <div class="mota-chips" id="mota-chips-wrap">
+      ${motaOpts.map(o=>`<span class="mota-chip" onclick="toggleMotaChip(this,'${o}')">${o}</span>`).join('')}
+    </div>
+  </div>`;
+}
+
 function setXe(mode,el){
   document.querySelectorAll('.xe-opt').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   xeMode=mode;
   if(mode!=='custom'){
     const vars=getVars(currentTpl.body);
@@ -342,19 +479,13 @@ function toggleMotaChip(el, val){
 }
 
 function getMotaValue(motaVar){
-  const inp=document.getElementById(eid(motaVar));
-  const typed=inp?inp.value.trim():'';
   const chips=[...document.querySelectorAll('.mota-chip.active')].map(c=>c.textContent);
-  const parts=[];
-  if(typed) parts.push(typed);
-  if(chips.length) parts.push(chips.join(', '));
-  return parts.length?parts.join(', '):('{'+motaVar+'}');
+  return chips.length?chips.join(', '):('{'+motaVar+'}');
 }
 
 // ── Preview ───────────────────────────────────────────────
 function buildPreview(){
   if(!currentTpl) return;
-  // === SỬA: nếu người dùng đã tự sửa thì không ghi đè ===
   if(userEdited) return;
 
   const showMoi=document.getElementById('toggle-moi').checked;
@@ -365,7 +496,6 @@ function buildPreview(){
     let val;
     if(isXeVar(v)){
       val=getXeValue();
-      // Nếu chọn free thì xóa luôn phần hậu tố đi kèm (vd: k/xe, k/tháng...)
       if(xeMode && xeMode!=='custom'){
         const escaped=v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
         body=body.replace(new RegExp('\\{'+escaped+'\\}\\S*','g'), val);
@@ -382,7 +512,7 @@ function buildPreview(){
 
   const out=(showMoi?'Dự án mới\n':'')+body;
   const el=document.getElementById('preview');
-  el.value=out;           // === SỬA: dùng .value thay vì .textContent ===
+  el.value=out;
   el.classList.remove('empty');
 }
 
@@ -391,20 +521,19 @@ function copyText(){
   const text=el.value;
   if(!text||el.classList.contains('empty')) return toast('Chưa có nội dung!');
   if(navigator.clipboard){
-    navigator.clipboard.writeText(text).then(()=>toast('✅ Đã sao chép!')).catch(()=>fallbackCopy(text));
+    navigator.clipboard.writeText(text).then(()=>toast('Đã sao chép!')).catch(()=>fallbackCopy(text));
   } else { fallbackCopy(text); }
 }
 function fallbackCopy(text){
   const ta=document.createElement('textarea');
   ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
   document.body.appendChild(ta);ta.focus();ta.select();
-  try{document.execCommand('copy');toast('✅ Đã sao chép!');}catch(e){toast('Không sao chép được');}
+  try{document.execCommand('copy');toast('Đã sao chép!');}catch(e){toast('Không sao chép được');}
   document.body.removeChild(ta);
 }
 
 function clearAll(){
   document.querySelectorAll('#fields-container input,#fields-container textarea').forEach(i=>i.value='');
-  document.getElementById('toggle-moi').checked=false;
   document.querySelectorAll('.xe-opt').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.mota-chip').forEach(x=>x.classList.remove('active'));
   xeMode=null;
@@ -422,7 +551,7 @@ function renderTplList(){
     const vars=getVars(t.body).slice(0,4);
     const more=getVars(t.body).length>4?` +${getVars(t.body).length-4} nữa`:'';
     return `<div class="tpl-item">
-      <div onclick="editFromList('${t.id}')" style="flex:1;min-width:0">
+      <div onclick="openQuickEdit(templates.find(x=>x.id==='${t.id}'))" style="flex:1;min-width:0">
         <div class="tpl-name">${t.name}</div>
         <div class="tpl-vars">${vars.map(v=>'{'+v+'}').join(' ')}${more}</div>
       </div>
@@ -431,13 +560,8 @@ function renderTplList(){
   }).join('');
 }
 
-function editFromList(id){
-  const tpl=templates.find(t=>t.id===id);
-  if(tpl) openEditor(tpl);
-}
-
 function deleteTpl(id){
-  if(templates.length<=1){toast('⚠️ Cần ít nhất 1 mẫu');return;}
+  if(templates.length<=1){toast('Cần ít nhất 1 mẫu');return;}
   if(!confirm('Xóa mẫu này?')) return;
   templates=templates.filter(t=>t.id!==id);
   if(currentTpl?.id===id) currentTpl=templates[0];
@@ -448,7 +572,7 @@ function deleteTpl(id){
   toast('Đã xóa mẫu');
 }
 
-// ── Editor ────────────────────────────────────────────────
+// ── Editor (tab quản lý mẫu) ──────────────────────────────
 function openEditor(tpl){
   editingId=tpl?tpl.id:null;
   document.getElementById('editor-title').textContent=tpl?'Chỉnh sửa: '+tpl.name:'Thêm mẫu mới';
@@ -471,8 +595,8 @@ function parseEditorVars(){
 function saveTemplate(){
   const name=document.getElementById('ed-name').value.trim();
   const body=document.getElementById('ed-body').value.trim();
-  if(!name){toast('⚠️ Nhập tên mẫu');return;}
-  if(!body){toast('⚠️ Nhập nội dung mẫu');return;}
+  if(!name){toast('Nhập tên mẫu');return;}
+  if(!body){toast('Nhập nội dung mẫu');return;}
   if(editingId){
     const idx=templates.findIndex(t=>t.id===editingId);
     if(idx>=0) templates[idx]={...templates[idx],name,body};
@@ -484,10 +608,30 @@ function saveTemplate(){
   renderSelect();
   if(!editingId||currentTpl?.id===editingId) loadTemplate();
   cancelEditor();
-  toast('✅ Đã lưu mẫu!');
+  toast('Đã lưu mẫu!');
+}
+
+// ── Theme ─────────────────────────────────────────────────
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('prt_theme', theme);
+  const btn=document.getElementById('theme-btn');
+  if(btn) btn.textContent=theme==='dark'?'Light':'Dark';
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  if(cur==='dark') applyTheme('light');
+  else applyTheme('dark');
+}
+function initTheme(){
+  const saved=localStorage.getItem('prt_theme');
+  if(saved){ applyTheme(saved); return; }
+  const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  applyTheme(prefersDark?'dark':'light');
 }
 
 // ── Init ──────────────────────────────────────────────────
+initTheme();
 ls_load();
 renderSelect();
 loadTemplate();
